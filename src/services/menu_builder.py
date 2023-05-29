@@ -34,6 +34,7 @@ class MenuBuilder:
                 "price": dish.price,
                 "restrictions": dish.get_restrictions(),
             }
-            if restriction not in dish.get_restrictions():
+            if restriction not in dish.get_restrictions(
+            ) and self.inventory.check_recipe_availability(dish.recipe):
                 menu.append(menu_info)
         return pd.DataFrame(menu)

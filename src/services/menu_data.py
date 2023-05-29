@@ -6,19 +6,20 @@ import pandas as pd
 # Req 3
 class MenuData:
     def __init__(self, source_path: str) -> None:
-        self.dishes = {}
+        self.dishes = set()
         self.csv_data = pd.read_csv(source_path)
 
-        dishes = {
-            name: Dish(name, price)
-            for name, price, ingredient, amount
-            in self.csv_data.itertuples(index=False)
-        }
+        dishes = {}
 
-        for name, _, ingredient, amount in self.csv_data.itertuples(
-            index=False
-        ):
-            data = Ingredient(ingredient)
-            dishes[name].add_ingredient_dependency(data, amount)
+        for data in self.csv_data.itertuples(index=False):
+            dish, price, ingredient, recipe_amount = data
+            if dish not in dishes:
+                dish_info = Dish(dish, price)
+                dishes[dish] = dish_info
+                self.dishes.add(dish_info)
 
-        self.dishes.update(dishes.values())
+            ingredient_data = Ingredient(ingredient)
+            dishes[dish].add_ingredient_dependency(
+                ingredient_data,
+                recipe_amount
+            )
